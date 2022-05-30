@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  webserver:
+    image: nginx:alpine
+    container_name: ${PROJECT_NAME}-webserver
+    ports:
+      - 20080:80
+    volumes:
+      - ./config/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ../:/application
+    environment:
+      - VIRTUAL_PORT=80
+    restart: unless-stopped
+    networks:
+      - application-network
+  application:
+    image: cornehq/docker-application:latest
+    container_name: ${PROJECT_NAME}-app
+    volumes:
+      - ../:/application
+    restart: unless-stopped
+    networks:
+      - application-network
+  database:
+    image: mariadb:latest
+    container_name: ${PROJECT_NAME}-database
+    volumes:
+      - ./database-data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - application-network
+  workspace:
+    image: cornehq/docker-workspace:latest
+    container_name: ${PROJECT_NAME}-workspace
+    volumes:
+      - ../:/application:cached
+    restart: unless-stopped
+    networks:
+      - application-network
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: ${PROJECT_NAME}-phpmyadmin
+    ports:
+      - 28080:80
+    environment:
+      - PMA_HOST=database
+      - PMA_USER=root
+      - PMA_PASSWORD=${DB_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - application-network
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: ${PROJECT_NAME}-mailhog
+    ports:
+      - 28081:8025
+    restart: unless-stopped
+    networks:
+      - application-network
+  redis:
+    image: redis:alpine
+    container_name: ${PROJECT_NAME}-redis
+    restart: unless-stopped
+    ports:
+      - 26379:6379
+    networks:
+      - application-network
+
+networks:
+  application-network:
+    driver: bridge
+    name: ${PROJECT_NAME}-network

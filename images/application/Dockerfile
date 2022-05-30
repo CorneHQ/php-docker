@@ -1,0 +1,1 @@
+FROM cornehq/docker-php-fpm:latest
