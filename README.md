@@ -3,6 +3,7 @@
 A great development environment for all your PHP projects including MariaDB, PHPMyAdmin, Mailhog and Redis. This repository can also be used for PHP frameworks like CakePHP, Laravel and Symfony.
 
 ## Installation
+* Clone this repository with `git clone https://github.com/CorneHQ/php-docker.git`
 * Copy `.env.example` to `.env` and edit the `.env` file with your settings
 * Edit the config/nginx/default.conf with your project root
 * Build the docker images with `cd scripts && bash build.sh`
@@ -10,6 +11,8 @@ A great development environment for all your PHP projects including MariaDB, PHP
 * Start the containers with `docker-compose up -d`
 * Enter the workspace container with `docker exec -it projectname-workspace ash`
 * Execute all your commands in the workspace container. For example: composer, node, redis etc.
+
+NOTE: Place this repository in the **root folder** of your amazing project
 
 ## Docker commands
 **Start all the containers**
